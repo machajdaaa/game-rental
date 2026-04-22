@@ -27,7 +27,7 @@ public class Fine {
     private BigDecimal amount;
 
     @Column(nullable = false)
-    private Boolean paoid = false;
+    private Boolean paid = false;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
