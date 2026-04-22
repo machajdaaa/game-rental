@@ -1,4 +1,4 @@
-package cz.gamerental.gamerental.config;
+package cz.gamerental.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

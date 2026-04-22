@@ -1,4 +1,4 @@
-package cz.gamerental.gamerental;
+package cz.gamerental;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
