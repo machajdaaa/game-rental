@@ -34,5 +34,8 @@ public class Loan {
 
     private LocalDate returnDate;
 
+    @OneToOne(mappedBy = "loan")
+    private Fine fine;
+
 
 }

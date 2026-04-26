@@ -38,4 +38,7 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<GameCategory> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "game")
+    private Set<GameCopy> copies = new HashSet<>();
 }

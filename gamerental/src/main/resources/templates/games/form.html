@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Přidat hru')}"></head>
+<body>
+
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Přidat hru</h2>
+        <a href="/games" class="btn btn-outline-secondary">Zpět na seznam</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form th:action="@{/games/new}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Název hry</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Min. hráčů</label>
+                        <input type="number" name="minPlayers" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Max. hráčů</label>
+                        <input type="number" name="maxPlayers" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Min. věk</label>
+                        <input type="number" name="minAge" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Délka hry (min)</label>
+                        <input type="number" name="durationMinutes" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Vydavatel</label>
+                    <select name="publisherId" class="form-select" required>
+                        <option value="">-- Vyberte vydavatele --</option>
+                        <option th:each="publisher : ${publishers}"
+                                th:value="${publisher.id}"
+                                th:text="${publisher.name}">
+                        </option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Kategorie</label>
+                    <div th:each="category : ${categories}" class="form-check">
+                        <input type="checkbox" name="categoryIds"
+                               th:value="${category.id}"
+                               class="form-check-input"
+                               th:id="${'cat-' + category.id}">
+                        <label class="form-check-label"
+                               th:for="${'cat-' + category.id}"
+                               th:text="${category.name}">
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Uložit hru</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

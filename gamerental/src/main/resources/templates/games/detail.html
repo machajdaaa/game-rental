@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head th:replace="~{layout :: head('Detail hry')}"></head>
+<body>
+
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 th:text="${game.title}"></h2>
+        <a href="/games" class="btn btn-outline-secondary">Zpět na seznam</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>Vydavatel</th>
+                    <td th:text="${game.publisher != null ? game.publisher.name : '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Počet hráčů</th>
+                    <td th:text="${game.minPlayers + ' - ' + game.maxPlayers}"></td>
+                </tr>
+                <tr>
+                    <th>Minimální věk</th>
+                    <td th:text="${game.minAge + '+'}"></td>
+                </tr>
+                <tr>
+                    <th>Délka hry</th>
+                    <td th:text="${game.durationMinutes + ' minut'}"></td>
+                </tr>
+                <tr>
+                    <th>Kategorie</th>
+                    <td th:text="${#strings.listJoin(game.categories.![name], ', ')}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Dostupné výtisky</h5>
+            <div th:each="copy : ${game.copies}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>
+                        <span th:text="${copy.inventoryCode}"></span>
+                        — <span th:text="${copy.condition}"></span>
+                    </span>
+                    <form th:if="${copy.available}" th:action="@{/loans/new}" method="post">
+                        <input type="hidden" name="gameCopyId" th:value="${copy.id}">
+                        <button type="submit" class="btn btn-sm btn-success">Půjčit</button>
+                    </form>
+                    <span th:unless="${copy.available}" class="badge bg-secondary">Nedostupné</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div sec:authorize="hasRole('ADMIN')" class="mt-4">
+        <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post"
+              onsubmit="return confirm('Opravdu smazat?')">
+            <button type="submit" class="btn btn-danger">Smazat hru</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

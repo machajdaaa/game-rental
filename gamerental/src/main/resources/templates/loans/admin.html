@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Všechny výpůjčky')}"></head>
+<body>
+
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container">
+    <h2 class="mb-4">Všechny výpůjčky</h2>
+
+    <div th:if="${#lists.isEmpty(loans)}" class="alert alert-info">
+        Žádné výpůjčky nenalezeny.
+    </div>
+
+    <table th:unless="${#lists.isEmpty(loans)}" class="table table-striped">
+        <thead>
+        <tr>
+            <th>Uživatel</th>
+            <th>Hra</th>
+            <th>Výtisk</th>
+            <th>Půjčeno</th>
+            <th>Vrátit do</th>
+            <th>Vráceno</th>
+            <th>Pokuta</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="loan : ${loans}"
+            th:classappend="${loan.returnDate == null and loan.dueDate.isBefore(#temporals.createNow().toLocalDate())} ? 'table-danger'">
+            <td th:text="${loan.user.username}"></td>
+            <td th:text="${loan.gameCopy.game.title}"></td>
+            <td th:text="${loan.gameCopy.inventoryCode}"></td>
+            <td th:text="${loan.loanDate}"></td>
+            <td th:text="${loan.dueDate}"></td>
+            <td th:text="${loan.returnDate != null ? loan.returnDate : 'Nevráceno'}"></td>
+            <td th:text="${loan.fine != null ? loan.fine.amount + ' Kč' : '-'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

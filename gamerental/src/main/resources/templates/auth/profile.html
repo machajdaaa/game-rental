@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Profil')}"></head>
+<body>
+
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container">
+    <h2 class="mb-4">Můj profil</h2>
+
+    <div class="row">
+        <div class="col-md-5">
+            <table class="table">
+                <tr>
+                    <th>Uživatelské jméno</th>
+                    <td th:text="${user.username}"></td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td th:text="${user.email}"></td>
+                </tr>
+                <tr>
+                    <th>Celé jméno</th>
+                    <td th:text="${user.fullname}"></td>
+                </tr>
+                <tr>
+                    <th>Role</th>
+                    <td th:each="role : ${user.roles}" th:text="${role.name + ' '}"></td>
+                </tr>
+            </table>
+
+            <a href="/loans" class="btn btn-outline-primary">Moje výpůjčky</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
