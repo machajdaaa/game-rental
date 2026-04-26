@@ -33,7 +33,7 @@
                 </tr>
                 <tr>
                     <th>Kategorie</th>
-                    <td th:text="${#strings.listJoin(game.categories.![name], ', ')}"></td>
+                    <td th:text="${#strings.listJoin(categoryNames, ', ')}"></td>
                 </tr>
             </table>
         </div>

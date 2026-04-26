@@ -24,7 +24,7 @@
             <td th:text="${user.username}"></td>
             <td th:text="${user.email}"></td>
             <td th:text="${user.fullname}"></td>
-            <td th:text="${#strings.listJoin(user.roles.![name], ', ')}"></td>
+            <td th:text="${#strings.listJoin(userRoleNames[user.id], ', ')}"></td>
         </tr>
         </tbody>
     </table>

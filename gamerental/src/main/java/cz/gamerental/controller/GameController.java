@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -33,7 +34,12 @@ public class GameController {
 
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
-        model.addAttribute("game", gameService.findById(id));
+        Game game = gameService.findById(id);
+        model.addAttribute("game", game);
+        List<String> categoryNames = game.getCategories().stream()
+                .map(c -> c.getName())
+                .toList();
+        model.addAttribute("categoryNames", categoryNames);
         return "games/detail";
     }
 

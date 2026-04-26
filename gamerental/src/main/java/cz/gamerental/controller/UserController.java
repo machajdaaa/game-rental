@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -43,7 +47,14 @@ public class UserController {
 
     @GetMapping("/admin/users")
     public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        Map<Long, List<String>> userRoleNames = users.stream()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        u -> u.getRoles().stream().map(r -> r.getName()).toList()
+                ));
+        model.addAttribute("userRoleNames", userRoleNames);
         return "admin/users";
     }
 
