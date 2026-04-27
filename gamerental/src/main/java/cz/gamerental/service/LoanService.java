@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
@@ -97,6 +99,13 @@ public class LoanService {
 
     public List<Loan> findByUserId(Long userId) {
         return loanRepository.findAllByUserId(userId);
+    }
+
+    public Set<Long> getActiveLoanCopyIds(User user) {
+        return loanRepository.findByUserIdAndReturnDateIsNull(user.getId())
+                .stream()
+                .map(l -> l.getGameCopy().getId())
+                .collect(Collectors.toSet());
     }
 
     public List<Loan> findAll() {

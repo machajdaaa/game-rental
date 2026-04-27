@@ -3,6 +3,7 @@ package cz.gamerental.controller;
 import cz.gamerental.model.Game;
 import cz.gamerental.model.User;
 import cz.gamerental.service.GameService;
+import cz.gamerental.service.LoanService;
 import cz.gamerental.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ public class GameController {
 
     private final GameService gameService;
     private final ReservationService reservationService;
+    private final LoanService loanService;
 
     @GetMapping
     public String list(@RequestParam(required = false) String search, Model model) {
@@ -48,9 +52,21 @@ public class GameController {
         long availableCopies = game.getCopies().stream().filter(c -> c.getAvailable()).count();
         model.addAttribute("totalCopies", game.getCopies().size());
         model.addAttribute("availableCopies", availableCopies);
-        if (user != null) {
-            model.addAttribute("reservedCopyIds", reservationService.getReservedCopyIds(user));
-        }
+
+        Set<Long> alreadyReservedIds = user != null
+                ? reservationService.getReservedCopyIds(user)
+                : Collections.emptySet();
+        Set<Long> loanedCopyIds = user != null
+                ? loanService.getActiveLoanCopyIds(user)
+                : Collections.emptySet();
+        Set<Long> reservableCopyIds = game.getCopies().stream()
+                .filter(c -> !c.getAvailable()
+                        && !alreadyReservedIds.contains(c.getId())
+                        && !loanedCopyIds.contains(c.getId()))
+                .map(c -> c.getId())
+                .collect(Collectors.toSet());
+        model.addAttribute("reservableCopyIds", reservableCopyIds);
+        model.addAttribute("alreadyReservedIds", alreadyReservedIds);
         return "games/detail";
     }
 
