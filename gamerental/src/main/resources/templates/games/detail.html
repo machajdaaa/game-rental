@@ -50,6 +50,10 @@
                         <input type="hidden" name="gameCopyId" th:value="${copy.id}">
                         <button type="submit" class="btn btn-sm btn-success">Půjčit</button>
                     </form>
+                    <form th:if="${!copy.available}" th:action="@{/reservations/new}" method="post">
+                        <input type="hidden" name="gameCopyId" th:value="${copy.id}">
+                        <button type="submit" class="btn btn-sm btn-warning">Rezervovat</button>
+                    </form>
                     <span th:unless="${copy.available}" class="badge bg-secondary">Nedostupné</span>
                 </div>
             </div>

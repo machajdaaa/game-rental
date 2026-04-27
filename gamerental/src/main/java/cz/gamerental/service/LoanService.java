@@ -9,6 +9,7 @@ import cz.gamerental.repository.GameCopyRepository;
 import cz.gamerental.repository.LoanRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,15 +19,28 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class LoanService {
+
 
     private final LoanRepository loanRepository;
     private final GameCopyRepository gameCopyRepository;
     private final FineRepository fineRepository;
 
+    private final NotificationService notificationService;
+
     private static final BigDecimal FINE_PER_DAY = new BigDecimal("10.00");
     private static final int LOAN_DURATION_DAYS = 14;
+
+    public LoanService(LoanRepository loanRepository,
+                       GameCopyRepository gameCopyRepository,
+                       FineRepository fineRepository,
+                       @Lazy NotificationService notificationService) {
+        this.loanRepository = loanRepository;
+        this.gameCopyRepository = gameCopyRepository;
+        this.fineRepository = fineRepository;
+        this.notificationService = notificationService;
+    }
+
 
     @Transactional
     public Loan createLoan(User user, Long gameCopyId) {
@@ -45,6 +59,8 @@ public class LoanService {
         loan.setGameCopy(gameCopy);
         loan.setLoanDate(LocalDate.now());
         loan.setDueDate(LocalDate.now().plusDays(LOAN_DURATION_DAYS));
+
+        notificationService.createNotification(user, "Vypůčil jste si hru: " + gameCopy.getGame().getTitle() + ". Vrátit do: " + loan.getDueDate());
 
         return loanRepository.save(loan);
     }
@@ -70,7 +86,11 @@ public class LoanService {
             fine.setPaid(false);
             fine.setCreatedAt(LocalDateTime.now());
             fineRepository.save(fine);
+
+            notificationService.createNotification(loan.getUser(), "Byla vám udělena pokuta " + amount + " Kč za pozdní vrácení hry " + loan.getGameCopy().getGame().getTitle());
         }
+
+        notificationService.createNotification(loan.getUser(), "Hra " + loan.getGameCopy().getGame().getTitle() + "byla úspěšně vrácena.");
 
         return loanRepository.save(loan);
     }

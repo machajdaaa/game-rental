@@ -1,12 +1,14 @@
 package cz.gamerental.controller;
 
 import cz.gamerental.model.User;
+import cz.gamerental.service.NotificationService;
 import cz.gamerental.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @GetMapping("/register")
     public String registerForm() {
@@ -56,6 +59,18 @@ public class UserController {
                 ));
         model.addAttribute("userRoleNames", userRoleNames);
         return "admin/users";
+    }
+
+    @GetMapping("/notifications")
+    public String notifications(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("notifications", notificationService.findByUser(user));
+        return "auth/notifications";
+    }
+
+    @PostMapping("/notifications/{id}/read")
+    public String markAsRead(@PathVariable Long id) {
+        notificationService.markAsRead(id);
+        return "redirect:/notifications";
     }
 
 
