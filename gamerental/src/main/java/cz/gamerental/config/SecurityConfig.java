@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/register", "/login").permitAll()
-                        .requestMatchers("/admin/**", "/loans/admin", "/games/new").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/loans/admin", "/games/new", "/games/*/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

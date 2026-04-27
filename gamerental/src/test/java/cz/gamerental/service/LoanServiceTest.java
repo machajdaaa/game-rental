@@ -1,5 +1,6 @@
 package cz.gamerental.service;
 
+import cz.gamerental.model.Game;
 import cz.gamerental.model.GameCopy;
 import cz.gamerental.model.Loan;
 import cz.gamerental.model.User;
@@ -32,6 +33,9 @@ class LoanServiceTest {
     @Mock
     private FineRepository fineRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private LoanService loanService;
 
@@ -44,10 +48,14 @@ class LoanServiceTest {
         user.setId(1L);
         user.setUsername("testuser");
 
+        Game game = new Game();
+        game.setTitle("Test hra");
+
         gameCopy = new GameCopy();
         gameCopy.setId(1L);
         gameCopy.setAvailable(true);
         gameCopy.setInventoryCode("INV001");
+        gameCopy.setGame(game);
     }
 
     @Test
