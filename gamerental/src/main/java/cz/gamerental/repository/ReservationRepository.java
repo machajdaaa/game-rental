@@ -11,7 +11,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByUserId(Long userId);
 
-    List<Reservation> findByUserIdAndStatusIn(Long userId, List<Reservation.ReservationStatus> statuses);
+    List<Reservation> findByUserIdAndStatus(Long userId, Reservation.ReservationStatus status);
 
-    boolean existsByUserIdAndGameCopyIdAndStatusIn(Long userId, Long gameCopyId, List<Reservation.ReservationStatus> statuses);
+    boolean existsByUserIdAndGameCopyIdAndStatus(Long userId, Long gameCopyId, Reservation.ReservationStatus status);
 }

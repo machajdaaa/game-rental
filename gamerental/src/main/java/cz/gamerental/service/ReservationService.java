@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static cz.gamerental.model.Reservation.ReservationStatus.PENDING;
+
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -21,12 +23,9 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final GameCopyRepository gameCopyRepository;
 
-    private static final List<Reservation.ReservationStatus> ACTIVE_STATUSES =
-            List.of(Reservation.ReservationStatus.PENDING);
-
     @Transactional
     public Reservation createReservation(User user, Long gameCopyId) {
-        if (reservationRepository.existsByUserIdAndGameCopyIdAndStatusIn(user.getId(), gameCopyId, ACTIVE_STATUSES)) {
+        if (reservationRepository.existsByUserIdAndGameCopyIdAndStatus(user.getId(), gameCopyId, PENDING)) {
             throw new IllegalStateException("Tato kopie hry je již rezervována");
         }
 
@@ -43,7 +42,7 @@ public class ReservationService {
     }
 
     public Set<Long> getReservedCopyIds(User user) {
-        return reservationRepository.findByUserIdAndStatusIn(user.getId(), ACTIVE_STATUSES)
+        return reservationRepository.findByUserIdAndStatus(user.getId(), PENDING)
                 .stream()
                 .map(r -> r.getGameCopy().getId())
                 .collect(Collectors.toSet());

@@ -1,7 +1,6 @@
 package cz.gamerental.controller;
 
 import cz.gamerental.model.User;
-import cz.gamerental.service.GameService;
 import cz.gamerental.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class LoanController {
 
     private final LoanService loanService;
-    private final GameService gameService;
 
     @GetMapping
     public String myLoans(@AuthenticationPrincipal User user, Model model) {

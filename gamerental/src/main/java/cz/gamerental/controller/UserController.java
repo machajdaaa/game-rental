@@ -54,7 +54,7 @@ public class UserController {
         model.addAttribute("users", users);
         Map<Long, List<String>> userRoleNames = users.stream()
                 .collect(Collectors.toMap(
-                        User::getId,
+                        u -> u.getId(),
                         u -> u.getRoles().stream().map(r -> r.getName()).toList()
                 ));
         model.addAttribute("userRoleNames", userRoleNames);
