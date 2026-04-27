@@ -3,11 +3,15 @@ package cz.gamerental.service;
 import cz.gamerental.model.Game;
 import cz.gamerental.model.GameCategory;
 import cz.gamerental.model.GameCopy;
+import cz.gamerental.model.Loan;
 import cz.gamerental.model.Publisher;
+import cz.gamerental.repository.FineRepository;
 import cz.gamerental.repository.GameCategoryRepository;
 import cz.gamerental.repository.GameCopyRepository;
 import cz.gamerental.repository.GameRepository;
+import cz.gamerental.repository.LoanRepository;
 import cz.gamerental.repository.PublisherRepository;
+import cz.gamerental.repository.ReservationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,9 @@ public class GameService {
     private final PublisherRepository publisherRepository;
     private final GameCategoryRepository gameCategoryRepository;
     private final GameCopyRepository gameCopyRepository;
+    private final LoanRepository loanRepository;
+    private final ReservationRepository reservationRepository;
+    private final FineRepository fineRepository;
 
     public List<Game> findAll() {
         return gameRepository.findAll();
@@ -76,6 +83,22 @@ public class GameService {
 
     @Transactional
     public void delete(Long id) {
+        List<GameCopy> copies = gameCopyRepository.findAllByGameId(id);
+        List<Long> copyIds = copies.stream().map(GameCopy::getId).toList();
+
+        if (!copyIds.isEmpty()) {
+            List<Loan> loans = loanRepository.findAllByGameCopyIdIn(copyIds);
+            List<Long> loanIds = loans.stream().map(Loan::getId).toList();
+
+            if (!loanIds.isEmpty()) {
+                fineRepository.deleteAll(fineRepository.findAllByLoanIdIn(loanIds));
+                loanRepository.deleteAll(loans);
+            }
+
+            reservationRepository.deleteAll(reservationRepository.findAllByGameCopyIdIn(copyIds));
+            gameCopyRepository.deleteAll(copies);
+        }
+
         gameRepository.deleteById(id);
     }
 

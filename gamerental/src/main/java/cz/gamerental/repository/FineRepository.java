@@ -12,4 +12,5 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
 
     Optional<Fine> findByLoanId(Long id);
     List<Fine> findByPaidFalse();
+    List<Fine> findAllByLoanIdIn(List<Long> loanIds);
 }

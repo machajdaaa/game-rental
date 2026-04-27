@@ -31,10 +31,6 @@ public class NotificationService {
         return notificationRepository.findByUserId(user.getId());
     }
 
-    public List<Notification> findUnreadByUser(User user) {
-        return notificationRepository.findByUserIdAndReadFalse(user.getId());
-    }
-
     @Transactional
     public Notification markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)

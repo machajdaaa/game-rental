@@ -11,4 +11,5 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     List<Loan> findAllByUserId(Long userId);
     List<Loan> findByUserIdAndReturnDateIsNull(Long userId);
+    List<Loan> findAllByGameCopyIdIn(List<Long> gameCopyIds);
 }

@@ -9,7 +9,7 @@ import cz.gamerental.repository.GameCopyRepository;
 import cz.gamerental.repository.LoanRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,27 +21,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LoanService {
-
 
     private final LoanRepository loanRepository;
     private final GameCopyRepository gameCopyRepository;
     private final FineRepository fineRepository;
-
     private final NotificationService notificationService;
 
     private static final BigDecimal FINE_PER_DAY = new BigDecimal("10.00");
     private static final int LOAN_DURATION_DAYS = 14;
-
-    public LoanService(LoanRepository loanRepository,
-                       GameCopyRepository gameCopyRepository,
-                       FineRepository fineRepository,
-                       @Lazy NotificationService notificationService) {
-        this.loanRepository = loanRepository;
-        this.gameCopyRepository = gameCopyRepository;
-        this.fineRepository = fineRepository;
-        this.notificationService = notificationService;
-    }
 
 
     @Transactional
