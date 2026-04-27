@@ -33,8 +33,6 @@ public class GameController {
             model.addAttribute("games", gameService.findAll());
         }
 
-        model.addAttribute("publishers", gameService.findAllPublishers());
-        model.addAttribute("categories", gameService.findAllCategories());
         model.addAttribute("search", search);
         return "games/list";
     }
