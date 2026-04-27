@@ -2,8 +2,10 @@ package cz.gamerental.service;
 
 import cz.gamerental.model.Game;
 import cz.gamerental.model.GameCategory;
+import cz.gamerental.model.GameCopy;
 import cz.gamerental.model.Publisher;
 import cz.gamerental.repository.GameCategoryRepository;
+import cz.gamerental.repository.GameCopyRepository;
 import cz.gamerental.repository.GameRepository;
 import cz.gamerental.repository.PublisherRepository;
 import jakarta.transaction.Transactional;
@@ -21,6 +23,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final PublisherRepository publisherRepository;
     private final GameCategoryRepository gameCategoryRepository;
+    private final GameCopyRepository gameCopyRepository;
 
     public List<Game> findAll() {
         return gameRepository.findAll();
@@ -38,7 +41,7 @@ public class GameService {
     @Transactional
     public Game save(String title, Integer minPlayers, Integer maxPlayers,
                      Integer minAge, Integer durationMinutes,
-                     Long publisherId, Set<Long> categoryIds) {
+                     Long publisherId, Set<Long> categoryIds, Integer copyCount) {
 
         Publisher publisher = publisherRepository.findById(publisherId)
                 .orElseThrow(() -> new RuntimeException("Vydavatel nenalezen"));
@@ -57,7 +60,18 @@ public class GameService {
         game.setPublisher(publisher);
         game.setCategories(categories);
 
-        return gameRepository.save(game);
+        Game savedGame = gameRepository.save(game);
+
+        for (int i = 1; i <= copyCount; i++) {
+            GameCopy copy = new GameCopy();
+            copy.setGame(savedGame);
+            copy.setCondition(GameCopy.CopyCondition.NEW);
+            copy.setAvailable(true);
+            copy.setInventoryCode(String.format("%d-%02d", savedGame.getId(), i));
+            gameCopyRepository.save(copy);
+        }
+
+        return savedGame;
     }
 
     @Transactional

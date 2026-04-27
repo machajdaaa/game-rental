@@ -34,6 +34,6 @@ public class Reservation {
     private ReservationStatus status;
 
     public enum ReservationStatus {
-        PENDING, ACTIVE, CANCELED
+        PENDING, CANCELED
     }
 }

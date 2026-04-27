@@ -10,4 +10,8 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     List<Reservation> findByUserId(Long userId);
+
+    List<Reservation> findByUserIdAndStatusIn(Long userId, List<Reservation.ReservationStatus> statuses);
+
+    boolean existsByUserIdAndGameCopyIdAndStatusIn(Long userId, Long gameCopyId, List<Reservation.ReservationStatus> statuses);
 }

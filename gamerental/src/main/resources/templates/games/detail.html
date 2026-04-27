@@ -35,6 +35,10 @@
                     <th>Kategorie</th>
                     <td th:text="${#strings.listJoin(categoryNames, ', ')}"></td>
                 </tr>
+                <tr>
+                    <th>Počet kopií</th>
+                    <td th:text="${totalCopies + ' celkem / ' + availableCopies + ' dostupných'}"></td>
+                </tr>
             </table>
         </div>
 
@@ -50,10 +54,13 @@
                         <input type="hidden" name="gameCopyId" th:value="${copy.id}">
                         <button type="submit" class="btn btn-sm btn-success">Půjčit</button>
                     </form>
-                    <form th:if="${!copy.available}" th:action="@{/reservations/new}" method="post">
+                    <form th:if="${!copy.available and (reservedCopyIds == null or !reservedCopyIds.contains(copy.id))}"
+                          th:action="@{/reservations/new}" method="post">
                         <input type="hidden" name="gameCopyId" th:value="${copy.id}">
                         <button type="submit" class="btn btn-sm btn-warning">Rezervovat</button>
                     </form>
+                    <span th:if="${!copy.available and reservedCopyIds != null and reservedCopyIds.contains(copy.id)}"
+                          class="badge bg-info">Rezervováno</span>
                     <span th:unless="${copy.available}" class="badge bg-secondary">Nedostupné</span>
                 </div>
             </div>

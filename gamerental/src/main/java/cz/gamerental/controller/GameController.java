@@ -1,9 +1,11 @@
 package cz.gamerental.controller;
 
 import cz.gamerental.model.Game;
+import cz.gamerental.model.User;
 import cz.gamerental.service.GameService;
-import lombok.Getter;
+import cz.gamerental.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.Set;
 public class GameController {
 
     private final GameService gameService;
+    private final ReservationService reservationService;
 
     @GetMapping
     public String list(@RequestParam(required = false) String search, Model model) {
@@ -33,13 +36,21 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(@PathVariable Long id,
+                         @AuthenticationPrincipal User user,
+                         Model model) {
         Game game = gameService.findById(id);
         model.addAttribute("game", game);
         List<String> categoryNames = game.getCategories().stream()
                 .map(c -> c.getName())
                 .toList();
         model.addAttribute("categoryNames", categoryNames);
+        long availableCopies = game.getCopies().stream().filter(c -> c.getAvailable()).count();
+        model.addAttribute("totalCopies", game.getCopies().size());
+        model.addAttribute("availableCopies", availableCopies);
+        if (user != null) {
+            model.addAttribute("reservedCopyIds", reservationService.getReservedCopyIds(user));
+        }
         return "games/detail";
     }
 
@@ -50,15 +61,16 @@ public class GameController {
         return "games/form";
     }
 
-    @PostMapping("/{new}")
+    @PostMapping("/new")
     public String createGame(@RequestParam String title,
                              @RequestParam Integer minPlayers,
                              @RequestParam Integer maxPlayers,
                              @RequestParam Integer minAge,
                              @RequestParam Integer durationMinutes,
                              @RequestParam Long publisherId,
-                             @RequestParam Set<Long> categoryIds) {
-        gameService.save(title, minPlayers, maxPlayers, minAge, durationMinutes, publisherId, categoryIds);
+                             @RequestParam Set<Long> categoryIds,
+                             @RequestParam Integer copyCount) {
+        gameService.save(title, minPlayers, maxPlayers, minAge, durationMinutes, publisherId, categoryIds, copyCount);
         return "redirect:/games";
     }
 
